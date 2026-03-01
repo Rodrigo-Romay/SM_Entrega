@@ -33,11 +33,11 @@ public class CerebroGhost : MonoBehaviour
 
     [Header("Comportamiento: Investigacion")]
     public float tiempoConfusion = 2f; 
-    public float toleranciaVision = 0.5f; // ¡NUEVO! Margen antes de detenerse a pensar
+    public float toleranciaVision = 0.5f;
     
     private bool debeInvestigar = false;
     private float cronometroConfusion = 0f;
-    private float tiempoSinPercibir = 0f; // Cuenta cuánto tiempo lleva sin verte
+    private float tiempoSinPercibir = 0f;
     private Vector3 ultimaPosicionConocida; 
 
     void Start()
@@ -66,13 +66,13 @@ public class CerebroGhost : MonoBehaviour
             return; 
         }
 
-        // PRIORIDAD 2: VISIÓN O ESCUCHA
+        // PRIORIDAD 2: VISIÓN / ESCUCHA
         bool veAlJugador = sensorVis != null && sensorVis.DetectarObjetivo(humano, transform);
         bool oyeAlJugador = sensorEsc != null && sensorEsc.DetectarRuido(humano);
 
         if (veAlJugador || oyeAlJugador)
         {
-            tiempoSinPercibir = 0f; // Reseteamos el margen de pérdida
+            tiempoSinPercibir = 0f;
             ultimaPosicionConocida = humano.position;
             debeInvestigar = true; 
             cronometroConfusion = 0f; 
@@ -81,19 +81,17 @@ public class CerebroGhost : MonoBehaviour
             return;
         }
 
-        // Si te acaba de perder, evaluamos su memoria a corto plazo
         if (debeInvestigar)
         {
             tiempoSinPercibir += Time.deltaTime;
             
-            // ¡EL ARREGLO!: Si está dentro del margen de tolerancia, sigue corriendo
             if (tiempoSinPercibir < toleranciaVision)
             {
                 Perseguir(); 
                 return;
             }
 
-            // PRIORIDAD 3: CONFUSIÓN (Ya pasó la tolerancia, se para con el interrogante)
+            // PRIORIDAD 3: CONFUSIÓN
             if (cronometroConfusion < tiempoConfusion)
             {
                 EstarConfundido();
@@ -105,7 +103,7 @@ public class CerebroGhost : MonoBehaviour
             return;
         }
 
-        // PRIORIDAD 5: PATRULLA Y VIGILANCIA NORMAL
+        // PRIORIDAD 5: PATRULLA Y VIGILANCIA
         if (estaVigilando)
         {
             Vigilar();
@@ -116,7 +114,7 @@ public class CerebroGhost : MonoBehaviour
         }
     }
 
-    // --- ACCIONES CON ICONOS VISUALES ---
+    // ACCIONES
 
     void Perseguir()
     {

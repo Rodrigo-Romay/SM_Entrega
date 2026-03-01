@@ -1,18 +1,17 @@
 using UnityEngine;
-using TMPro; // Necesario para usar texto de TextMeshPro
+using TMPro;
 
 public class ControladorJuego : MonoBehaviour
 {
     public static ControladorJuego instancia;
-    public GameObject panelGameOver; // El objeto que contiene el texto de Game Over
+    public GameObject panelGameOver; 
 
-    // Asegúrate de que en Awake esté esto:
     void Awake()
     {
         if (instancia == null) 
         {
             instancia = this;
-            DontDestroyOnLoad(gameObject); // Opcional: para que no se borre entre escenas
+            DontDestroyOnLoad(gameObject);
         }
         else 
         {
@@ -22,14 +21,14 @@ public class ControladorJuego : MonoBehaviour
 
     void Start()
     {
-        // Nos aseguramos de que el mensaje esté oculto al empezar
+        // Mensaje esté oculto al empezar
         if (panelGameOver != null) panelGameOver.SetActive(false);
     }
 
     public void TerminarJuego()
     {
         Debug.Log("¡GAME OVER!");
-        panelGameOver.SetActive(true); // Mostramos el mensaje en grande
-        Time.timeScale = 0f; // Detenemos el tiempo de todo el juego
+        panelGameOver.SetActive(true);
+        Time.timeScale = 0f;
     }
 }

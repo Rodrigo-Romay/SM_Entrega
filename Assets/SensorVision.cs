@@ -21,7 +21,6 @@ public class SensorVision : MonoBehaviour
             if (angulo < anguloVision)
             {
                 RaycastHit hit;
-                // Dibujamos el rayo para depurar: Verde si no hay obstáculos, Rojo si choca
                 Debug.DrawRay(ejecutor.position + Vector3.up, direccion * distancia, Color.red);
 
                 if (Physics.Raycast(ejecutor.position + Vector3.up, direccion, out hit, radioVision, capaObstaculos))

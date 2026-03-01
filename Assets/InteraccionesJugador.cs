@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro; 
-using System.Collections; // ¡Vital para usar temporizadores (Corrutinas)!
+using System.Collections;
 
 public class InteraccionesJugador : MonoBehaviour
 {
@@ -14,7 +14,6 @@ public class InteraccionesJugador : MonoBehaviour
 
     void Start()
     {
-        // Empezamos con la pantalla limpia
         if (textoPantalla != null)
         {
             textoPantalla.text = "";
@@ -23,17 +22,16 @@ public class InteraccionesJugador : MonoBehaviour
 
     void OnTriggerEnter(Collider otroObjeto)
     {
-        // 1. ¿Hemos tocado el cofre?
+        // Comprobar si se cogió el cofe
         if (otroObjeto.CompareTag("Cofre"))
         {
             tieneCofre = true;
             
-            // Escribimos en la pantalla
             if (textoPantalla != null)
             {
                 textoPantalla.text = "¡SALIDA ABIERTA!";
                 
-                // Iniciamos el temporizador oculto (3.5 segundos)
+                // Temporizador para el texto
                 StartCoroutine(BorrarTextoDespuesDeSegundos(3.5f));
             }
 
@@ -45,24 +43,22 @@ public class InteraccionesJugador : MonoBehaviour
             }
         }
 
-        // 2. ¿Hemos tocado la zona de victoria?
+        // Comprobar si se llegó a la salida
         if (otroObjeto.CompareTag("Salida"))
         {
             if (tieneCofre)
             {
-                // Paramos cualquier temporizador previo para que no borre el mensaje final
                 StopAllCoroutines(); 
 
-                // Escribimos el mensaje final
+                // Mensaje final
                 if (textoPantalla != null)
                 {
                     textoPantalla.text = "¡HAS GANADO!";
                 }
 
-                // Congelamos el tiempo
                 Time.timeScale = 0f;
 
-                // Salimos del modo Play
+                // Salir del play
                 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
                 #else
@@ -72,13 +68,10 @@ public class InteraccionesJugador : MonoBehaviour
         }
     }
 
-    // --- EL TEMPORIZADOR ---
     private IEnumerator BorrarTextoDespuesDeSegundos(float tiempo)
     {
-        // Le decimos a Unity: "Pausa esta función y vuelve cuando pase este tiempo"
         yield return new WaitForSeconds(tiempo);
         
-        // Cuando vuelve, vacía el texto
         if (textoPantalla != null)
         {
             textoPantalla.text = "";

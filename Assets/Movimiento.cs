@@ -18,7 +18,7 @@ public class Movimiento : MonoBehaviour
 
     void FixedUpdate()  
     {
-        // 1. INPUT EXCLUSIVO DE WASD (Ignora las flechas)
+        // Moverse con el input de WASD
         float x = 0f;
         float z = 0f;
 
@@ -36,7 +36,6 @@ public class Movimiento : MonoBehaviour
 
             Vector3 movimiento = direccion.normalized * velocidadActual;
             
-            // Usamos el MovePosition que te funciona bien para las puertas
             rb.MovePosition(rb.position + movimiento * Time.fixedDeltaTime);
 
             Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
