@@ -1,16 +1,17 @@
 using UnityEngine;
+using System; 
 
 public class SensorContacto : MonoBehaviour
 {
     public string tagJugador = "Player";
-
-    public bool jugadorAtrapado = false; 
+    public event Action OnJugadorAtrapado;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(tagJugador))
         {
-            jugadorAtrapado = true; 
+            // Disparamos el evento
+            OnJugadorAtrapado?.Invoke(); 
         }
     }
 }

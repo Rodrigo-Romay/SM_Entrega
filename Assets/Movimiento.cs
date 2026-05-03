@@ -29,8 +29,7 @@ public class Movimiento : MonoBehaviour
 
         Vector3 direccion = new Vector3(x, 0, z);
 
-        if (direccion.magnitude >= 0.1f)
-        {
+        if (direccion.magnitude >= 0.1f){
             bool estaCorriendo = Input.GetKey(KeyCode.LeftShift);
             float velocidadActual = estaCorriendo ? velocidadCorrer : velocidadAndar;
 
@@ -44,8 +43,7 @@ public class Movimiento : MonoBehaviour
             float valorAnimacion = estaCorriendo ? 1f : 0.5f;
             animator.SetFloat("Velocidad", valorAnimacion, 0.1f, Time.fixedDeltaTime);
         }
-        else
-        {
+        else{
             animator.SetFloat("Velocidad", 0f, 0.1f, Time.fixedDeltaTime);
         }
     }

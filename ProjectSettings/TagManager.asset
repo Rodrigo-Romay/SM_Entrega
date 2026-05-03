@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Cofre
   - Salida
+  - Puerta
+  - Fantasma
   layers:
   - Default
   - TransparentFX
@@ -14,7 +16,7 @@ TagManager:
   - Water
   - UI
   - "Obst\xE1culos"
-  - 
+  - Puertas
   - 
   - 
   - 

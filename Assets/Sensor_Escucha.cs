@@ -1,51 +1,72 @@
 using UnityEngine;
+using System;
 
 public class SensorEscucha : MonoBehaviour
 {
-    [Header("Radios de Escucha")]
+    [Header("Radios de Escucha (Ajustar en el SphereCollider)")]
     public float radioAndando = 3f;
     public float radioCorriendo = 7f;
 
     [Header("Configuración")]
     public float velocidadParaConsiderarCorrer = 5f; 
     
+    // EVENTOS
+    public event Action<Vector3> OnRuidoEscuchado;
+    public event Action OnRuidoPerdido;
+
     private Vector3 posicionAnteriorJugador;
+    private bool detectandoRuidoActualmente = false;
 
-    public bool DetectarRuido(Transform objetivo)
+    // Con OnTriggerStay hacemos que el sensor compruebe si el jugador se está moviendo lo suficiente
+    // como para ser oído, siempre que el jugador esté en el radio físico
+    void OnTriggerStay(Collider other)
     {
-        if (objetivo == null) return false;
+        if (other.CompareTag("Player")){
+            float velocidadActual = CalcularVelocidadJugador(other.transform);
+            float distanciaAlFantasma = Vector3.Distance(transform.position, other.transform.position);
 
-        // Calcular la velocidad real del jugador
+            float radioDeRuidoGenerado = (velocidadActual >= velocidadParaConsiderarCorrer) ? radioCorriendo : radioAndando;
+
+            // Si el jugador se mueve y está dentro de su propio radio de ruido
+            if (velocidadActual > 0.1f && distanciaAlFantasma <= radioDeRuidoGenerado){
+                if (!detectandoRuidoActualmente){
+                    detectandoRuidoActualmente = true;
+                    OnRuidoEscuchado?.Invoke(other.transform.position); // Notificamos el evento
+                }
+                
+            }
+            else if (detectandoRuidoActualmente){
+                PerderRuido();
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && detectandoRuidoActualmente){
+            PerderRuido();
+        }
+    }
+
+    private void PerderRuido()
+    {
+        detectandoRuidoActualmente = false;
+        OnRuidoPerdido?.Invoke(); 
+    }
+
+    private float CalcularVelocidadJugador(Transform objetivo)
+    {
         float distanciaMovida = Vector3.Distance(objetivo.position, posicionAnteriorJugador);
-        float velocidadActualJugador = distanciaMovida / Time.deltaTime;
-        
+        float velocidad = distanciaMovida / Time.deltaTime;
         posicionAnteriorJugador = objetivo.position;
+        return velocidad;
+    }
 
-        // Si el jugador está quieto no hace ruido
-        if (velocidadActualJugador < 0.1f)
-        {
-            return false;
+    public void EscucharRuidoExterno(Vector3 posicionRuido)
+    {
+        if (!detectandoRuidoActualmente){
+            detectandoRuidoActualmente = true;
+            OnRuidoEscuchado?.Invoke(posicionRuido); // Notificamos al cerebro
         }
-
-        // Definir que radio usar, si el de correr o andar
-        float radioActual = radioAndando;
-        
-        if (velocidadActualJugador >= velocidadParaConsiderarCorrer)
-        {
-            radioActual = radioCorriendo;
-        }
-
-        float distanciaAlFantasma = Vector3.Distance(transform.position, objetivo.position);
-
-        // Verificar que el fantasma oye al jugador
-        if (distanciaAlFantasma <= radioActual)
-        {
-            Color colorDepuracion = (radioActual == radioCorriendo) ? Color.red : Color.yellow;
-            Debug.DrawLine(transform.position, objetivo.position, colorDepuracion);
-            
-            return true; 
-        }
-
-        return false;
     }
 }

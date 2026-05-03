@@ -7,58 +7,74 @@ public class InteraccionesJugador : MonoBehaviour
     [Header("Elementos del Nivel")]
     public GameObject puertaSalida;
     
+    [Header("Configuración de Cofres")]
+    public int cofresNecesarios = 2;
+    private int cofresRecogidos = 0;
+    
     [Header("Interfaz (UI)")]
     public TextMeshProUGUI textoPantalla;
 
-    private bool tieneCofre = false;
+    // Variable para recordar qué puerta hay delante
+    private PuertaDinamica puertaCercana;
 
     void Start()
     {
-        if (textoPantalla != null)
-        {
+        if (textoPantalla != null){
             textoPantalla.text = "";
+        }
+    }
+
+    void Update()
+    {
+        // Pulsar la e para abrir la puerta
+        if (puertaCercana != null && Input.GetKeyDown(KeyCode.E)){
+            puertaCercana.Interactuar(this.gameObject);
         }
     }
 
     void OnTriggerEnter(Collider otroObjeto)
     {
-        // Comprobar si se cogió el cofe
-        if (otroObjeto.CompareTag("Cofre"))
-        {
-            tieneCofre = true;
+        // Detectar si entramos en la zona de una puerta
+        if (otroObjeto.CompareTag("Puerta")){
+            puertaCercana = otroObjeto.GetComponent<PuertaDinamica>();
+        }
+
+        // Cofres
+        if (otroObjeto.CompareTag("Cofre")){
+            cofresRecogidos++;
             
-            if (textoPantalla != null)
-            {
-                textoPantalla.text = "¡SALIDA ABIERTA!";
+            if (textoPantalla != null){
+                if (cofresRecogidos < cofresNecesarios){
+                    // Todavía faltan cofres
+                    textoPantalla.text = $"¡Cofre recogido! ({cofresRecogidos}/{cofresNecesarios})";
+                }
+                else{
+                    // Se cogieron ambos cofres
+                    textoPantalla.text = "¡SALIDA ABIERTA!";
+                    
+                    if (puertaSalida != null){
+                        puertaSalida.SetActive(false); // Abrimos la salida
+                    }
+                }
                 
-                // Temporizador para el texto
+                StopAllCoroutines(); // Reseteamos el temporizador del texto por si pilla dos muy rápido
                 StartCoroutine(BorrarTextoDespuesDeSegundos(3.5f));
             }
 
-            // Destruimos el cofre y abrimos la puerta
             Destroy(otroObjeto.gameObject);
-            if (puertaSalida != null)
-            {
-                puertaSalida.SetActive(false);
-            }
         }
 
-        // Comprobar si se llegó a la salida
-        if (otroObjeto.CompareTag("Salida"))
-        {
-            if (tieneCofre)
-            {
+        if (otroObjeto.CompareTag("Salida")){
+            // Solo ganamos si el contador ha llegado al objetivo
+            if (cofresRecogidos == cofresNecesarios){
                 StopAllCoroutines(); 
 
-                // Mensaje final
-                if (textoPantalla != null)
-                {
+                if (textoPantalla != null){
                     textoPantalla.text = "¡HAS GANADO!";
                 }
 
                 Time.timeScale = 0f;
 
-                // Salir del play
                 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
                 #else
@@ -68,12 +84,21 @@ public class InteraccionesJugador : MonoBehaviour
         }
     }
 
+    void OnTriggerExit(Collider otroObjeto){
+        if (otroObjeto.CompareTag("Puerta")){
+            // Solo vaciamos la variable si es la misma puerta de la que nos alejamos
+            PuertaDinamica puertaQueDejamos = otroObjeto.GetComponent<PuertaDinamica>();
+            if (puertaQueDejamos == puertaCercana){
+                puertaCercana = null;
+            }
+        }
+    }
+
     private IEnumerator BorrarTextoDespuesDeSegundos(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);
         
-        if (textoPantalla != null)
-        {
+        if (textoPantalla != null){
             textoPantalla.text = "";
         }
     }

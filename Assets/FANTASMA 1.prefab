@@ -313,9 +313,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1598774530123159930}
   - component: {fileID: 1194416572676051961}
+  - component: {fileID: 2265054539847285427}
   m_Layer: 0
   m_Name: Sensor_Escucha
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -350,6 +351,27 @@ MonoBehaviour:
   radioAndando: 3
   radioCorriendo: 7
   velocidadParaConsiderarCorrer: 5
+--- !u!135 &2265054539847285427
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3218776482805955523}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 7
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4007677797845209258
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,6 +667,18 @@ MonoBehaviour:
   velocidadGiro: 3
   tiempoConfusion: 2
   toleranciaVision: 0.5
+  agent: {fileID: 0}
+  sensorVis: {fileID: 0}
+  sensorNav: {fileID: 0}
+  sensorCont: {fileID: 0}
+  sensorEsc: {fileID: 0}
+  indiceActual: 0
+  tiempoUltimaRuta: 0
+  anguloInicialY: 0
+  ultimaPosicionConocida: {x: 0, y: 0, z: 0}
+  debeInvestigar: 0
+  viendoAlJugador: 0
+  oyendoAlJugador: 0
 --- !u!4 &6613206606991882213 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 796652407307068396, guid: 8ee08d04ad5df46fbb2e97260b63420b, type: 3}
